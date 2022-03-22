@@ -116,7 +116,6 @@ func TestMapToStruct(t *testing.T) {
 			var out *person
 			if tt.args.suppressError {
 				out, err = MapToStruct[person](tt.args.src, WithSuppressError(true))
-
 			} else if tt.args.caseInsensitive {
 				out, err = MapToStruct[person](tt.args.src, WithCaseInsensitive(true))
 			} else {
