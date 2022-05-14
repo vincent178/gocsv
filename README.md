@@ -50,7 +50,7 @@ func main() {
 }
 ```
 
-You can check the full example in examples folder.
+You can check the full example in [examples](./examples/) folder.
 
 * Suppress Error
 
