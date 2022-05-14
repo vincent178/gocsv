@@ -28,7 +28,7 @@ name,count,is_enable,other key
 bar,1,false,kk
 ```
 
-Parse like this, need to specify the return type with go generics way `[Foo]`:
+Parse like this, need to specify the return type with go generics way `[Foo]`(Go can't infer type based on the return value type you speicify on the left side):
 
 ```go
 func main() {
