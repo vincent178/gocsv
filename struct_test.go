@@ -1,129 +1,139 @@
 package gocsv
 
 import (
-	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type person struct {
-	Name      string `csv:"Name"`
-	Age       uint   `csv:"Age"`
-	Height    int    `csv:"Height"`
-	IsTeacher bool   `csv:"Is Teacher"`
+	Name      string
+	Age       uint
+	Height    int
+	IsTeacher bool `csv:"Is Teacher"`
 }
 
-func TestMapToStruct(t *testing.T) {
+func Test_ReadT(t *testing.T) {
 	type args struct {
-		src             map[string]string
+		file            string
 		suppressError   bool
 		caseInsensitive bool
 	}
 	tests := []struct {
-		name string
-		args args
-		want *person
+		name  string
+		file  string
+		args  args
+		want  []person
+		error bool
 	}{
 		{
 			name: "unmarshal to struct",
 			args: args{
-				src: map[string]string{
-					"Name":       "Jojo",
-					"Age":        "22",
-					"Height":     "188",
-					"Is Teacher": "false",
+				file: "fixtures/1.csv",
+			},
+			want: []person{
+				{
+					Name:      "Jojo",
+					Age:       uint(22),
+					Height:    188,
+					IsTeacher: false,
 				},
 			},
-			want: &person{
-				Name:      "Jojo",
-				Age:       22,
-				Height:    188,
-				IsTeacher: false,
-			},
+			error: false,
 		},
 		{
-			name: "with empty value",
+			name: "with empty value for some header[s]",
 			args: args{
-				src: map[string]string{
-					"Name":       "Jojo",
-					"Age":        "",
-					"Height":     "188",
-					"Is Teacher": "false",
+				file: "fixtures/2.csv",
+			},
+			want: []person{
+				{
+					Name:      "Jojo",
+					Age:       0,
+					Height:    188,
+					IsTeacher: false,
 				},
 			},
-			want: &person{
-				Name:      "Jojo",
-				Age:       0,
-				Height:    188,
-				IsTeacher: false,
-			},
+			error: false,
 		},
 		{
-			name: "with interface out",
+			name: "with empty value for all headers",
 			args: args{
-				src: map[string]string{
-					"Name":       "Jojo",
-					"Age":        "",
-					"Height":     "188",
-					"Is Teacher": "false",
-				},
+				file:          "fixtures/5.csv",
+				suppressError: false,
 			},
-			want: &person{
-				Name:      "Jojo",
-				Age:       0,
-				Height:    188,
-				IsTeacher: false,
-			},
+			want:  []person{},
+			error: false,
 		},
 		{
-			name: "with invalid value error",
+			name: "with empty value and empty headers",
 			args: args{
-				src: map[string]string{
-					"Name":       "Jojo",
-					"Age":        "",
-					"Height":     "L",
-					"Is Teacher": "false",
-				},
+				file:          "fixtures/6.csv",
+				suppressError: false,
+			},
+			want:  []person{},
+			error: false,
+		},
+		{
+			name: "with invalid value and suppress error",
+			args: args{
+				file:          "fixtures/3.csv",
 				suppressError: true,
 			},
-			want: &person{
-				Name:   "Jojo",
-				Age:    0,
-				Height: 0,
+			want: []person{
+				{
+					Name:   "Jojo",
+					Age:    0,
+					Height: 0,
+				},
 			},
+			error: false,
 		},
 		{
-			name: "with caseInsensitive true",
+			name: "with invalid value and return error",
 			args: args{
-				src: map[string]string{
-					"Name":       "Jojo",
-					"age":        "",
-					"height":     "188",
-					"is teacher": "true",
-				},
-				caseInsensitive: true,
+				file:          "fixtures/3.csv",
+				suppressError: false,
 			},
-			want: &person{
-				Name:      "Jojo",
-				Age:       0,
-				Height:    188,
-				IsTeacher: true,
+			want:  []person{},
+			error: true,
+		},
+		{
+			name: "with case insensitive header",
+			args: args{
+				file: "fixtures/4.csv",
 			},
+			want: []person{
+        {
+          Name:      "Jojo",
+          Age:       0,
+          Height:    188,
+          IsTeacher: true,
+        },
+			},
+			error: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var err error
-			var out *person
+			f, err := os.Open(tt.args.file)
+			assert.NoError(t, err)
+			defer f.Close()
+
+			var persons []person
 			if tt.args.suppressError {
-				out, err = MapToStruct[person](tt.args.src, WithSuppressError(true))
-			} else if tt.args.caseInsensitive {
-				out, err = MapToStruct[person](tt.args.src, WithCaseInsensitive(true))
+				persons, err = Read[person](f, WithSuppressError(true))
 			} else {
-				out, err = MapToStruct[person](tt.args.src)
+				persons, err = Read[person](f)
 			}
 
-			assert.NoError(t, err)
-			assert.Equal(t, out, tt.want)
+			if tt.error {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want, persons)
+			}
 		})
 	}
 }

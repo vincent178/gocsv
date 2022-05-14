@@ -1,36 +1,18 @@
-gocsv
-=====
+package main
 
-> parse csv file to slice of structs
+import (
+	"fmt"
+	"os"
 
-## Requirement
+	"github.com/vincent178/gocsv"
+)
 
-require go 1.18 which support generics
-
-## Usage
-
-* Basic
-
-Define a struct:
-
-```go
 type Foo struct {
   Name  string
   Count uint // speicify type other than string
   Enable bool `csv:"is_enable"` // speicify csv tag which used to mapping csv header  
 }
-```
 
-Read a csv file:
-
-```csv
-name,count,is_enable,other key
-bar,1,false,kk
-```
-
-Parse like this:
-
-```go
 func main() {
   f, err := os.Open("./data.csv")
   if err != nil {
@@ -48,8 +30,3 @@ func main() {
     fmt.Printf("%+v\n", r)
   }
 }
-```
-
-You can check the full example in examples folder.
-
-* Suppress Error
