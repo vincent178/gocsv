@@ -1,7 +1,7 @@
 gocsv
 =====
 
-> parse csv file to slice of structs
+> parse csv file to slice of structs with one line code
 
 ## Requirement
 
@@ -28,7 +28,7 @@ name,count,is_enable,other key
 bar,1,false,kk
 ```
 
-Parse like this:
+Parse like this, need to specify the return type with go generics way `[Foo]`:
 
 ```go
 func main() {
@@ -38,7 +38,7 @@ func main() {
   }
   defer f.Close()
 
-  ret, err := gocsv.Read[Foo](f) # speicify the return type with generics `[Foo]`
+  ret, err := gocsv.Read[Foo](f) # speicify type here
 
   if err != nil {
     panic(err)
