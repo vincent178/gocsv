@@ -53,3 +53,8 @@ func main() {
 You can check the full example in examples folder.
 
 * Suppress Error
+
+In the case where do you want to deal with data imcompatible with field type definition, you can tell gocsv to suppress those errors.
+```go
+ret, err := gocsv.Read[Foo](f, gocsv.WithSuppressError(true))
+```
