@@ -15,8 +15,8 @@ Define a struct:
 
 ```go
 type Foo struct {
-  Name  string
-  Count uint                    // speicify type other than string
+  Name   string
+  Count  uint                   // speicify type other than string
   Enable bool `csv:"is_enable"` // speicify csv tag which used to mapping csv header  
 }
 ```
