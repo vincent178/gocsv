@@ -16,7 +16,7 @@ Define a struct:
 ```go
 type Foo struct {
   Name  string
-  Count uint // speicify type other than string
+  Count uint                    // speicify type other than string
   Enable bool `csv:"is_enable"` // speicify csv tag which used to mapping csv header  
 }
 ```
@@ -38,7 +38,7 @@ func main() {
   }
   defer f.Close()
 
-  ret, err := gocsv.Read[Foo](f) # speicify type here
+  ret, err := gocsv.Read[Foo](f) // speicify type here
 
   if err != nil {
     panic(err)
