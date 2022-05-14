@@ -38,7 +38,7 @@ func main() {
   }
   defer f.Close()
 
-  ret, err := gocsv.Read[Foo](f)
+  ret, err := gocsv.Read[Foo](f) # speicify the return type with generics `[Foo]`
 
   if err != nil {
     panic(err)
