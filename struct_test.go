@@ -105,12 +105,12 @@ func Test_ReadT(t *testing.T) {
 				file: "fixtures/4.csv",
 			},
 			want: []person{
-        {
-          Name:      "Jojo",
-          Age:       0,
-          Height:    188,
-          IsTeacher: true,
-        },
+				{
+					Name:      "Jojo",
+					Age:       0,
+					Height:    188,
+					IsTeacher: true,
+				},
 			},
 			error: false,
 		},

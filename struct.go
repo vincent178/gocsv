@@ -35,22 +35,22 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 
 	var out T
 
-  // only allow struct type, TODO: how to specify type restriction with generic
+	// only allow struct type, TODO: how to specify type restriction with generic
 	rv := reflect.ValueOf(out)
 	if rv.Kind() != reflect.Struct {
 		return nil, errors.New(fmt.Sprintf("invalid generic type %v", rv.Kind()))
 	}
 
 	// get pointer of type T instance
-  // which is addressable and could set value into it
+	// which is addressable and could set value into it
 	p := &out
 
 	ret := make([]T, 0)
 
-  // empty file
-  if len(records) == 0 {
-    return ret, nil
-  }
+	// empty file
+	if len(records) == 0 {
+		return ret, nil
+	}
 
 	headers := records[0]
 
@@ -58,8 +58,8 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 
 	mapping := make(map[int]int, 0)
 
-  // parse the struct, get the name of fields, 
-  // build the cache for headers index mapping to field name
+	// parse the struct, get the name of fields,
+	// build the cache for headers index mapping to field name
 	for i := 0; i < e.NumField(); i++ {
 		field := e.Type().Field(i)
 		name := field.Name
@@ -79,8 +79,8 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 		for idx, val := range records[i] {
 			if i, ok := mapping[idx]; ok {
 				if !e.Field(i).CanSet() {
-          // this should not happen
-          panic("reflection can not set")
+					// this should not happen
+					panic("reflection can not set")
 				}
 
 				// handle empty value
@@ -96,7 +96,7 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 					x, err := strconv.ParseUint(val, 10, 64)
 					if err != nil {
 						if o.SuppressError {
-              log.Printf("[gocsv] error: %+v\n", err)
+							log.Printf("[gocsv] error: %+v\n", err)
 							// set default value
 							e.Field(i).Set(e.Field(i))
 							continue
@@ -108,7 +108,7 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 					x, err := strconv.ParseInt(val, 10, 64)
 					if err != nil {
 						if o.SuppressError {
-              log.Printf("[gocsv] error: %+v\n", err)
+							log.Printf("[gocsv] error: %+v\n", err)
 							// set default value
 							e.Field(i).Set(e.Field(i))
 							continue
@@ -120,7 +120,7 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 					x, err := strconv.ParseFloat(val, 64)
 					if err != nil {
 						if o.SuppressError {
-              log.Printf("[gocsv] error: %+v\n", err)
+							log.Printf("[gocsv] error: %+v\n", err)
 							// set default value
 							e.Field(i).Set(e.Field(i))
 							continue
@@ -132,7 +132,7 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 					x, err := strconv.ParseBool(val)
 					if err != nil {
 						if o.SuppressError {
-              log.Printf("[gocsv] error: %+v\n", err)
+							log.Printf("[gocsv] error: %+v\n", err)
 							// set default value
 							e.Field(i).Set(e.Field(i))
 							continue
