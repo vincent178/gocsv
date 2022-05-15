@@ -28,7 +28,7 @@ name,count,is_enable,other key
 bar,1,false,kk
 ```
 
-Parse like this, need to specify the return type with go generics way `[Foo]`(Go can't infer type based on the return value type you speicify on the left side):
+Parse like this, you need to specify the type parameter `[Foo]` for the return value (Go can't infer type based on the return value type you speicify on the left side):
 
 ```go
 func main() {
@@ -54,7 +54,7 @@ You can check the full example in [examples](./examples/) folder.
 
 * Suppress Error
 
-In the case where do you want to deal with data imcompatible with field type definition, you can tell gocsv to suppress those errors.
+If you want to ignore data imcompatibility with field type definition, you can tell gocsv to suppress those errors.
 ```go
 ret, err := gocsv.Read[Foo](f, gocsv.WithSuppressError(true))
 ```
