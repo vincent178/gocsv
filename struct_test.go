@@ -14,7 +14,7 @@ type person struct {
 	IsTeacher bool `csv:"Is Teacher"`
 }
 
-func Test_ReadT(t *testing.T) {
+func Test_Read(t *testing.T) {
 	type args struct {
 		file            string
 		suppressError   bool
