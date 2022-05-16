@@ -63,7 +63,7 @@ func Test_ReadT(t *testing.T) {
 				file:          "fixtures/5.csv",
 				suppressError: false,
 			},
-			want:  []person{},
+			want:  nil,
 			error: false,
 		},
 		{
@@ -72,7 +72,7 @@ func Test_ReadT(t *testing.T) {
 				file:          "fixtures/6.csv",
 				suppressError: false,
 			},
-			want:  []person{},
+			want:  nil,
 			error: false,
 		},
 		{

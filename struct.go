@@ -48,8 +48,8 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 	ret := make([]T, 0)
 
 	// empty file
-	if len(records) == 0 {
-		return ret, nil
+	if len(records) <= 1 {
+		return nil, nil
 	}
 
 	headers := records[0]
