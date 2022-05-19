@@ -10,7 +10,7 @@ import (
 type person struct {
 	Name      string
 	Age       uint
-	Height    int
+	Height    int  `csv:"height,高度"`
 	IsTeacher bool `csv:"Is Teacher"`
 }
 
@@ -24,7 +24,7 @@ func Test_Read(t *testing.T) {
 		name  string
 		file  string
 		args  args
-		want  []person
+		want  []*person
 		error bool
 	}{
 		{
@@ -32,7 +32,7 @@ func Test_Read(t *testing.T) {
 			args: args{
 				file: "fixtures/1.csv",
 			},
-			want: []person{
+			want: []*person{
 				{
 					Name:      "Jojo",
 					Age:       uint(22),
@@ -47,7 +47,7 @@ func Test_Read(t *testing.T) {
 			args: args{
 				file: "fixtures/2.csv",
 			},
-			want: []person{
+			want: []*person{
 				{
 					Name:      "Jojo",
 					Age:       0,
@@ -81,7 +81,7 @@ func Test_Read(t *testing.T) {
 				file:          "fixtures/3.csv",
 				suppressError: true,
 			},
-			want: []person{
+			want: []*person{
 				{
 					Name:   "Jojo",
 					Age:    0,
@@ -96,7 +96,7 @@ func Test_Read(t *testing.T) {
 				file:          "fixtures/3.csv",
 				suppressError: false,
 			},
-			want:  []person{},
+			want:  []*person{},
 			error: true,
 		},
 		{
@@ -104,12 +104,27 @@ func Test_Read(t *testing.T) {
 			args: args{
 				file: "fixtures/4.csv",
 			},
-			want: []person{
+			want: []*person{
 				{
 					Name:      "Jojo",
 					Age:       0,
 					Height:    188,
 					IsTeacher: true,
+				},
+			},
+			error: false,
+		},
+		{
+			name: "unmarshal to struct with multiple overrides",
+			args: args{
+				file: "fixtures/7.csv",
+			},
+			want: []*person{
+				{
+					Name:      "Jojo",
+					Age:       uint(22),
+					Height:    188,
+					IsTeacher: false,
 				},
 			},
 			error: false,
@@ -121,7 +136,7 @@ func Test_Read(t *testing.T) {
 			assert.NoError(t, err)
 			defer f.Close()
 
-			var persons []person
+			var persons []*person
 			if tt.args.suppressError {
 				persons, err = Read[person](f, WithSuppressError(true))
 			} else {

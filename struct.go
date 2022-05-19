@@ -21,7 +21,7 @@ func WithSuppressError(suppressError bool) func(*option) {
 	}
 }
 
-func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
+func Read[T any](r io.Reader, options ...func(*option)) ([]*T, error) {
 	cr := csv.NewReader(r)
 	records, err := cr.ReadAll()
 	if err != nil {
@@ -45,7 +45,7 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 	// which is addressable and could set value into it
 	p := &out
 
-	ret := make([]T, 0)
+	ret := make([]*T, 0)
 
 	// empty file
 	if len(records) <= 1 {
@@ -64,14 +64,22 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 		field := e.Type().Field(i)
 		name := field.Name
 		override := field.Tag.Get("csv")
-		if override != "" {
-			name = override
+
+		if override == "" {
+			idx := findByName(headers, name)
+			if idx != -1 {
+				// store record index to field index cache
+				mapping[idx] = i
+			}
+			continue
 		}
 
-		idx := findByName(headers, name)
-		if idx != -1 {
-			// store record index to field index cache
-			mapping[idx] = i
+		for _, name := range strings.Split(override, ",") {
+			idx := findByName(headers, name)
+			if idx != -1 {
+				// store record index to field index cache
+				mapping[idx] = i
+			}
 		}
 	}
 
@@ -150,7 +158,7 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]T, error) {
 			}
 		}
 
-		ret = append(ret, out)
+		ret = append(ret, p)
 	}
 
 	return ret, nil
