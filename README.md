@@ -38,7 +38,7 @@ func main() {
   }
   defer f.Close()
 
-  ret, err := gocsv.Read[Foo](f) // speicify type here
+  ret, err := gocsv.Read[Foo](f) // speicify type here, return []*T
 
   if err != nil {
     panic(err)
@@ -57,4 +57,15 @@ You can check the full example in [examples](./examples/) folder.
 If you want to ignore data imcompatibility with field type definition, you can tell gocsv to suppress those errors.
 ```go
 ret, err := gocsv.Read[Foo](f, gocsv.WithSuppressError(true))
+```
+
+* Multiple overrides
+
+If you want to map another header to the same field:    
+```go
+type Foo struct {
+  Name   string
+  Count  uint   
+  Enable bool `csv:"is_enable,isEnabled"` // speicify multiple csv tag which used to mapping csv header  
+}
 ```
