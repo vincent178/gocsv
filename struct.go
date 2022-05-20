@@ -84,6 +84,10 @@ func Read[T any](r io.Reader, options ...func(*option)) ([]*T, error) {
 	}
 
 	for i := 1; i < len(records); i++ {
+		var out T
+		p := &out
+		e := reflect.ValueOf(p).Elem()
+
 		for idx, val := range records[i] {
 			if i, ok := mapping[idx]; ok {
 				if !e.Field(i).CanSet() {
